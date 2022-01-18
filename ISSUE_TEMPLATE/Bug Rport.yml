@@ -34,8 +34,6 @@ body:
         - label: macOS
         - label: Windows
         - label: Linux
-    validations:
-      required: true
   - type: dropdown
     id: version
     attributes:
