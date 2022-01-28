@@ -1,0 +1,24 @@
+name: "Bump Version"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: "Bump Version"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Bump Version
+        run: |
+          if [[ "$CDP_COMMIT_MESSAGE" =~ ^.*\((m|M)ajor\)\:.*$ ]]; then
+            bash ./.github/scripts/bump-version.sh MAJOR "$(bash ./.github/scripts/generate-changelog.sh)"
+          elif [[ "$CDP_COMMIT_MESSAGE" =~ ^.*\((m|M)inor\)\:.*$ ]]; then
+            bash ./.github/scripts/bump-version.sh MINOR "$(bash ./.github/scripts/generate-changelog.sh)"
+          else
+            bash ./.github/scripts/bump-version.sh PATCH "$(bash ./.github/scripts/generate-changelog.sh)"
+          fi
