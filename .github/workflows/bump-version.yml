@@ -20,6 +20,10 @@ jobs:
           git config --global user.email ""
           git config --global user.name "GitHub Actions Robot"
       - name: Bump Version
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GIT_ACCESS_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
         run: |
           if [[ "$CDP_COMMIT_MESSAGE" =~ ^.*\((m|M)ajor\)\:.*$ ]]; then
             bash ./.github/scripts/bump-version.sh MAJOR "$(bash ./.github/scripts/generate-changelog.sh)"
