@@ -35,7 +35,7 @@ fi
 if [ -z "$(git describe --contains $TAG 2> /dev/null)" ]; then
     echo "Bumping Version to $TAG"
     git tag -a $TAG -m "$2"
-    git push origin $TAG
+    git push "https://${GITHUB_ACTOR}:${secrets.GIT_ACCESS_KEY}" $TAG -f
 else
     echo "Version already Bumped!"
 fi
