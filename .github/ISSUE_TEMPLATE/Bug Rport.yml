@@ -1,7 +1,7 @@
 name: Bug Report
 description: File a bug report
 title: "[Bug]: "
-labels: ["Type: Bug", "State: Pendding", "Priority: Medium"]
+labels: [bug]
 assignees:
   - ralphschuler
 body:
@@ -34,6 +34,8 @@ body:
         - label: macOS
         - label: Windows
         - label: Linux
+    validations:
+      required: true
   - type: dropdown
     id: version
     attributes:

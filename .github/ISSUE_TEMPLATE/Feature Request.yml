@@ -1,7 +1,7 @@
 name: Feature Request
 description: File a feature request
 title: "[Feature]: "
-labels: ["Type: Feature", "State: Pendding", "Priority: Low"]
+labels: [feature]
 assignees:
   - ralphschuler
 body:
