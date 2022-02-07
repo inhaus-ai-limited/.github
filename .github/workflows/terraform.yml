@@ -36,6 +36,11 @@ jobs:
         with:
           directory: ./
           framework: terraform
+      - name: Publish Checkcov Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          check_name: Checkcov Test Results
+          files: "*.xml"
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
