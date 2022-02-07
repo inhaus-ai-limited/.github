@@ -26,34 +26,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.1.4
       - uses: actions/setup-python@v1
         with:
           python-version: 3.8
       - name: Setup checkov
         run: |
           pip install --user --upgrade checkov
-      - name: Terraform Init
-        id: init
-        run: terraform init
       - name: Check code coverage
         id: checkov
         continue-on-error: true
         run: |
-          checkov -d . >> source_results.sarif
-          checkov -d .terraform >> terraform_results.sarif
+          checkov -d . >> results.sarif
       - name: Upload Result file
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: source_results.sarif
-          category: source
-      - name: Upload Result file
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: terraform_results.sarif
-          category: terraform
+          sarif_file: results.sarif
+          category: checkov
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
