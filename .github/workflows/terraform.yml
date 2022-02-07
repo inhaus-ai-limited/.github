@@ -33,6 +33,7 @@ jobs:
       - name: Check code coverage
         id: checkov
         uses: bridgecrewio/checkov-action@master
+        continue-on-error: true
         with:
           directory: ./
           framework: terraform
