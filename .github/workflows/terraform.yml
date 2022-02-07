@@ -26,40 +26,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.4
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      - name: Setup checkov
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
+        run: |
+          pip install --user --upgrade checkov
       - name: Check code coverage
         id: checkov
-        uses: bridgecrewio/checkov-action@master
         continue-on-error: true
+        run: |
+          checkov -d . >> source_results.sarif
+          checkov -d .terraform >> terraform_results.sarif
+      - name: Upload Result file
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          output_format: github_failed_only
-          directory: ./
-          framework: terraform
-      - name: Update Pull Request
-        uses: actions/github-script@0.9.0
-        if: github.event_name == 'pull_request'
-        continue-on-error: true
-        env:
-          COVERAGE: "${{ steps.checkov.outputs.stdout }}"
+          sarif_file: source_results.sarif
+          category: source
+      - name: Upload Result file
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Code Coverage
-            <details><summary>Show Results</summary>
-              ${process.env.COVERAGE}
-            </details>
-
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
+          sarif_file: terraform_results.sarif
+          category: terraform
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
