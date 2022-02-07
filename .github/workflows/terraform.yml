@@ -35,13 +35,31 @@ jobs:
         uses: bridgecrewio/checkov-action@master
         continue-on-error: true
         with:
+          output_format: github_failed_only
           directory: ./
           framework: terraform
-      - name: Publish Checkcov Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+      - name: Update Pull Request
+        uses: actions/github-script@0.9.0
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          COV: "${{ steps.checkov.outputs.stdout }}"
         with:
-          check_name: Checkcov Test Results
-          files: "*.xml"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Code Coverage
+            <details><summary>Show Results</summary>
+              ${process.env.PLAN}
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
