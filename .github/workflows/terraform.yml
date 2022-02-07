@@ -7,6 +7,35 @@ on:
   pull_request:
 
 jobs:
+  tflint:
+    name: Terraform Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout source code
+      - uses: terraform-linters/setup-tflint@v1
+        name: Setup TFLint
+        with:
+          tflint_version: v0.29.0
+      - name: Init TFLint
+        run: tflint --init
+      - name: Run TFLint
+        run: tflint -f compact
+  checkcov:
+    name: Check Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Check code coverage
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: ./
+          framework: terraform
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
