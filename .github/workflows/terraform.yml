@@ -26,19 +26,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+      - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.1.4
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Setup checkov
+        run: |
+          pip install --user --upgrade checkov
       - name: Terraform Init
         id: init
         run: terraform init
-      - name: Setup checkov
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-        run: |
-          pip install --user --upgrade checkov
       - name: Check code coverage
         id: checkov
         continue-on-error: true
