@@ -25,6 +25,8 @@ runs:
         terraform_version: ${{ inputs.terraform_version }}
     - name: Terraform Init
       id: init
+      env:
+        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
         set +e
@@ -34,23 +36,16 @@ runs:
         echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
-    - name: Terraform select workspace
-      shell: bash
-      id: workspace
-      run: |
-        set +e
-        result=$(terraform workspace select ${{ inputs.terraform_workspace }})
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
     - uses: terraform-linters/setup-tflint@v1
       name: Setup TFLint
+      env:
+        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       with:
         tflint_version: v0.29.0
     - name: Init TFLint
       shell: bash
+      env:
+        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       run: |
         set +e
         result=$(tflint --init)
@@ -61,6 +56,8 @@ runs:
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Run TFLint
       id: lint
+      env:
+        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
         set +e
