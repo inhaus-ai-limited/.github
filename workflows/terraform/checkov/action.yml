@@ -56,7 +56,9 @@ runs:
           ### Check Coverage (${{ steps.time.outputs.time }})
 
           <details><summary>Show Result</summary>
+
           ${{ env.CHECKOV_RESULTS }}
+
           </details>
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
