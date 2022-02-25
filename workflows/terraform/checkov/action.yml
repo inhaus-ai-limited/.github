@@ -1,77 +1,70 @@
 name: "Terraform"
+description: "Terraform checkov workflow"
 
-on:
-  workflow_call:
-    inputs:
-      terraform_workspace:
-        description: "The Terraform workspace to use"
-        default: "default"
-        required: false
-        type: string
-      terraform_version:
-        description: "The Terraform version to use"
-        default: "0.12.28"
-        required: false
-        type: string
-    secrets:
-      github_token:
-        description: "The GitHub token to use"
-        required: true
-        type: string
+inputs:
+  terraform_workspace:
+    description: "The Terraform workspace to use"
+    default: "default"
+    required: false
+  terraform_version:
+    description: "The Terraform version to use"
+    default: "0.12.28"
+    required: false
+  github_token:
+    description: "The GitHub token to use"
+    required: true
 
-jobs:
-  checkcov:
-    name: Check Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-      - name: Run Checkov action
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        continue-on-error: true
-        with:
-          directory: .
-          quiet: true # optional: display only failed checks
-          soft_fail: false # optional: do not return an error code if there are failed checks
-          framework: all # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
-          output_format: cli # optional: the output format, one of: cli, json, junitxml, github_failed_only, or sarif. Default: sarif
-          download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
-      - name: Find Comment
-        if: github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v1
-        id: fc
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: "github-actions[bot]"
-          body-includes: "Bot Ref: 2319261079"
-      - name: Set current date as env variable
-        id: time
-        if: github.event_name == 'pull_request'
-        uses: nanzm/get-time-action@v1.1
-        with:
-          timeZone: 0
-          format: "YYYY-MM-DD HH-mm-ss"
-      - name: Create or Update comment
-        if: github.event_name == 'pull_request'
-        uses: peter-evans/create-or-update-comment@v1
-        with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ### Check Coverage (${{ steps.time.outputs.time }})
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Run Checkov action
+      id: checkov
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: .
+        quiet: true # optional: display only failed checks
+        soft_fail: false # optional: do not return an error code if there are failed checks
+        framework: all # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
+        output_format: cli # optional: the output format, one of: cli, json, junitxml, github_failed_only, or sarif. Default: sarif
+        download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
+    - name: Find Comment
+      if: github.event_name == 'pull_request'
+      uses: peter-evans/find-comment@v1
+      id: fc
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: "github-actions[bot]"
+        body-includes: "Bot Ref: 2319261079"
+    - name: Set current date as env variable
+      id: time
+      if: github.event_name == 'pull_request'
+      uses: nanzm/get-time-action@v1.1
+      with:
+        timeZone: 0
+        format: "YYYY-MM-DD HH-mm-ss"
+    - name: Create or Update comment
+      if: github.event_name == 'pull_request'
+      uses: peter-evans/create-or-update-comment@v1
+      with:
+        comment-id: ${{ steps.fc.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          ### Check Coverage (${{ steps.time.outputs.time }})
 
-            <details><summary>Show Result</summary>
-            ${{ env.CHECKOV_RESULTS }}
-            </details>
+          <details><summary>Show Result</summary>
+          ${{ env.CHECKOV_RESULTS }}
+          </details>
 
-            *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
-            *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
-            *Bot Ref: 2319261079*
-          reactions: rocket
-          edit-mode: replace
-      - name: Check Coverage Status
-        if: steps.checkov.outcome == 'failure'
-        run: exit 1
+          *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
+          *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+          *Bot Ref: 2319261079*
+        reactions: rocket
+        edit-mode: replace
+    - name: Check Coverage Status
+      if: steps.checkov.outcome == 'failure'
+      shell: bash
+      run: exit 1

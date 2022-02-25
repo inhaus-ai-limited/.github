@@ -12,7 +12,7 @@ on:
 
 jobs:
   checks:
-    name: "Lint"
+    name: "Checks"
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
     strategy:
