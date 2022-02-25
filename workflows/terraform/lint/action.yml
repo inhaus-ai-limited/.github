@@ -81,13 +81,9 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### TFLint (${{ steps.time.outputs.time }})
-          <details><summary>TFLint Init ${{ steps.init.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}</summary>
-          ```bash
-          ${{ steps.init.outputs.result}}
-          ```
-          </details>
-
-          <details><summary>TFLint Lint ${{ steps.lint.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}</summary>
+          #### TFLint Init ${{ steps.init.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
+          #### TFLint Lint ${{ steps.lint.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
+          <details><summary>Schow Result</summary>
           ```bash
           ${{ steps.lint.outputs.result}}
           ```
