@@ -32,7 +32,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform select workspace
       id: workspace
       shell: bash
@@ -42,7 +42,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform Validate
       id: validate
       shell: bash
@@ -52,7 +52,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform Plan
       id: plan
       shell: bash
@@ -63,7 +63,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -86,10 +86,10 @@ runs:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          ### Terraform Plan (${{ steps.time.outputs.time }})
-          #### Terraform Initialization ${{ steps.init.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
-          #### Terraform Validation ${{ steps.validate.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
-          #### Terraform Plan ${{ steps.plan.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
+          ### Terraform Plan (${{ inputs.terraform_workspace }})
+          #### Terraform Initialization ${{ steps.init.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
+          #### Terraform Validation ${{ steps.validate.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
+          #### Terraform Plan ${{ steps.plan.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
 
           <details><summary>Show Result</summary>
 
@@ -102,9 +102,10 @@ runs:
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
           *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
           *Bot Ref: 8643624023-${{ inputs.terraform_workspace }}*
+          *Time: ${{ steps.time.outputs.time }}*
         reactions: rocket
         edit-mode: replace
     - name: Terraform Plan Status
-      if: steps.plan.success == 'false'
+      if: steps.plan.exitCode != '0'
       shell: bash
       run: exit 1
