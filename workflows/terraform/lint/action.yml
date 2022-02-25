@@ -46,7 +46,7 @@ runs:
     - name: Init TFLint
       shell: bash
       run: |
-        result=$(tflint --init )
+        result=$(tflint --init)
         exitCode=$?
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
