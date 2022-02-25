@@ -85,7 +85,7 @@ runs:
           <details><summary>Show Result</summary>
 
           ```bash
-          ${{ steps.lint.outputs.stdout || steps.lint.outputs.stderr }}
+          ${{ steps.lint.outputs.result}}
           ```
 
           </details>
