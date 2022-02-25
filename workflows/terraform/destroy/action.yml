@@ -69,7 +69,7 @@ runs:
         timeZone: 0
         format: "YYYY-MM-DD HH-mm-ss"
     - name: Create or Update comment
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' || github.event_name == 'issue_comment'
       uses: peter-evans/create-or-update-comment@v1
       with:
         comment-id: ${{ steps.fc.outputs.comment-id }}
