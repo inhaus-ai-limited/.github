@@ -83,7 +83,6 @@ runs:
           *Bot Ref: 6904391964-${{ inputs.terraform_workspace }}*
         reactions: rocket
         edit-mode: replace
-    - name: Terraform LintStatus
-      if: steps.lint.exitcode != 0
+    - name: Terraform Lint Status
       shell: bash
-      run: exit 1
+      run: ${{ steps.lint.exitcode }}

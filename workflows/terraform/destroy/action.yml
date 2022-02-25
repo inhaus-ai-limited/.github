@@ -71,7 +71,6 @@ runs:
           *Bot Ref: 8643626573-${{ inputs.terraform_workspace }}*
         reactions: rocket
         edit-mode: replace
-    - name: Terraform Plan Status
-      if: steps.destroy.exitcode != 0
+    - name: Terraform Destroy Status
       shell: bash
-      run: exit 1
+      run: ${{ steps.destroy.exitcode }}
