@@ -27,26 +27,34 @@ runs:
       id: init
       shell: bash
       run: |
-        terraform init || true
-        echo "::set-output name=success::$($? == 0)"
+        result=$(terraform init)
+        exitCode=$?
+        echo "::set-output name=result::$(echo $result)"
+        echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Terraform select workspace
       id: workspace
       shell: bash
       run: |
-        terraform workspace select ${{ inputs.terraform_workspace }} || true
-        echo "::set-output name=success::$($? == 0)"
+        result=$(terraform workspace select ${{ inputs.terraform_workspace }})
+        exitCode=$?
+        echo "::set-output name=result::$(echo $result)"
+        echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Terraform Validate
       id: validate
       shell: bash
       run: |
-        terraform validate -no-color || true
-        echo "::set-output name=success::$($? == 0)"
+        result=$(terraform validate -no-color)
+        exitCode=$?
+        echo "::set-output name=result::$(echo $result)"
+        echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Terraform Apply
       id: apply
       shell: bash
       run: |
-        terraform apply -auto-approve || true
-        echo "::set-output name=success::$($? == 0)"
+        result=$(terraform apply -auto-approve)
+        exitCode=$?
+        echo "::set-output name=result::$(echo $result)"
+        echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
