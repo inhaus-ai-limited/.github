@@ -11,7 +11,7 @@ jobs:
   destroy_production:
     name: "Destroy Production"
     concurrency: production
-    if: ${{ github.event.issue.pull_request && github.event.comment.body == 'terraform destroy production' }}
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, 'terraform destroy production') }}
     environment:
       name: production
       url: https://${{ env.TF_VAR_cluster_name }}.${{ env.TF_VAR_zone_name }}.inhausai-infra.services
@@ -26,7 +26,7 @@ jobs:
   destroy_staging:
     name: "Destroy Staging"
     concurrency: staging
-    if: ${{ github.event.issue.pull_request && github.event.comment.body == 'terraform destroy staging' }}
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, 'terraform destroy staging')}}
     environment:
       name: staging
       url: https://${{ env.TF_VAR_cluster_name }}-test.${{ env.TF_VAR_zone_name }}.inhausai-infra.services
