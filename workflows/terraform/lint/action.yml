@@ -31,6 +31,7 @@ runs:
         result=$(terraform init)
         exitCode=$?
         set -e
+        echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform select workspace
@@ -41,6 +42,7 @@ runs:
         result=$(terraform workspace select ${{ inputs.terraform_workspace }})
         exitCode=$?
         set -e
+        echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - uses: terraform-linters/setup-tflint@v1
@@ -54,6 +56,7 @@ runs:
         result=$(tflint --init)
         exitCode=$?
         set -e
+        echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Run TFLint
@@ -64,6 +67,7 @@ runs:
         result=$(tflint -f compact --module)
         exitCode=$?
         set -e
+        echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Find Comment

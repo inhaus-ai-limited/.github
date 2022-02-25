@@ -31,6 +31,7 @@ runs:
         result=$(terraform init)
         exitCode=$?
         set -e
+        echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform select workspace
@@ -41,6 +42,7 @@ runs:
         result=$(terraform workspace select ${{ inputs.terraform_workspace }})
         exitCode=$?
         set -e
+        echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform Validate
@@ -51,6 +53,7 @@ runs:
         result=$(terraform validate -no-color)
         exitCode=$?
         set -e
+        echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform Apply
@@ -61,6 +64,7 @@ runs:
         result=$(terraform apply -auto-approve)
         exitCode=$?
         set -e
+        echo $result
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Find Comment
