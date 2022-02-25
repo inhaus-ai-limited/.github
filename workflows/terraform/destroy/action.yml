@@ -77,6 +77,7 @@ runs:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
+          ### Terraform Destroy
           ${{ steps.destroy.success == 'false' ? "Terraform destroy failed! ❌" : "Terraform destroy succeeded! ✅"}}
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*

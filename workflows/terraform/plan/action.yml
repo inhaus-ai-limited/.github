@@ -81,9 +81,9 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Plan (${{ steps.time.outputs.time }})
-          #### Terraform Initialization ⚙️`${{ steps.init.success }}`
-          #### Terraform Validation 🤖`${{ steps.validate.success }}`
-          #### Terraform Plan 📖`${{ steps.plan.success }}`
+          #### Terraform Initialization ${{ steps.init.success == 'false' ? "failed! ❌" : "succeeded! ✅"}}
+          #### Terraform Validation  ${{ steps.validate.success == 'false' ? "failed! ❌" : "succeeded! ✅"}}
+          #### Terraform Plan  ${{ steps.plan.success == 'false' ? "failed! ❌" : "succeeded! ✅"}}
 
           <details><summary>Show Plan</summary>
 
