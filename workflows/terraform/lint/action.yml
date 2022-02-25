@@ -26,23 +26,31 @@ runs:
     - name: Terraform Init
       id: init
       shell: bash
-      run: terraform init
+      run: |
+        terraform init || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Terraform select workspace
       shell: bash
       id: workspace
-      run: terraform workspace select ${{ inputs.terraform_workspace }}
+      run: |
+        terraform workspace select ${{ inputs.terraform_workspace }} || true
+        echo "::set-output name=success::$($? == 0)"
     - uses: terraform-linters/setup-tflint@v1
       name: Setup TFLint
       with:
         tflint_version: v0.29.0
     - name: Init TFLint
       shell: bash
-      run: tflint --init
+      run: |
+        tflint --init || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Run TFLint
       id: lint
       uses: mathiasvr/command-output@v1
       with:
-        run: tflint -f compact --module
+        run: |
+          tflint -f compact --module || true
+          echo "::set-output name=success::$($? == 0)"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -81,6 +89,6 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform LintStatus
-      if: steps.lint.outcome == 'failure'
+      if: steps.lint.success == 'false'
       shell: bash
       run: exit 1

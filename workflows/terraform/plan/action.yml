@@ -26,20 +26,28 @@ runs:
     - name: Terraform Init
       id: init
       shell: bash
-      run: terraform init
+      run: |
+        terraform init || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Terraform select workspace
       id: workspace
       shell: bash
-      run: terraform workspace select ${{ inputs.terraform_workspace }}
+      run: |
+        terraform workspace select ${{ inputs.terraform_workspace }} || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Terraform Validate
       id: validate
       shell: bash
-      run: terraform validate -no-color
+      run: |
+        terraform validate -no-color || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Terraform Plan
       id: plan
       shell: bash
       if: github.event_name == 'pull_request'
-      run: terraform plan -no-color
+      run: |
+        terraform plan -no-color || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -63,9 +71,9 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Plan (${{ steps.time.outputs.time }})
-          #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
-          #### Terraform Validation 🤖`${{ steps.validate.outcome }}`
-          #### Terraform Plan 📖`${{ steps.plan.outcome }}`
+          #### Terraform Initialization ⚙️`${{ steps.init.success }}`
+          #### Terraform Validation 🤖`${{ steps.validate.success }}`
+          #### Terraform Plan 📖`${{ steps.plan.success }}`
 
           <details><summary>Show Plan</summary>
 
@@ -81,6 +89,6 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform Plan Status
-      if: steps.plan.outcome == 'failure'
+      if: steps.plan.success == 'false'
       shell: bash
       run: exit 1
