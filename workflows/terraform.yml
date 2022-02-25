@@ -15,18 +15,15 @@ jobs:
     name: "Checks"
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        terraform_workspace: ["staging", "production"]
     steps:
       - uses: InHaus-Ai-Limited/.github/workflows/terraform/lint@main
         with:
-          terraform_workspace: ${{ matrix.terraform_workspace }}
+          terraform_workspace: "default"
           terraform_version: ${{ inputs.terraform_version }}
           github_token: ${{ secrets.github_token }}
       - uses: InHaus-Ai-Limited/.github/workflows/terraform/checkov@main
         with:
-          terraform_workspace: ${{ matrix.terraform_workspace }}
+          terraform_workspace: "default"
           terraform_version: ${{ inputs.terraform_version }}
           github_token: ${{ secrets.github_token }}
 
