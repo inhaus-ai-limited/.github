@@ -11,8 +11,8 @@ on:
       - "v*"
 
 jobs:
-  checks:
-    name: "Checks"
+  lint:
+    name: "Lint"
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
     steps:
@@ -21,6 +21,11 @@ jobs:
           terraform_workspace: "default"
           terraform_version: ${{ inputs.terraform_version }}
           github_token: ${{ secrets.github_token }}
+  checkov:
+    name: "Checkov"
+    concurrency: ci-${{ github.ref }}
+    runs-on: ubuntu-latest
+    steps:
       - uses: InHaus-Ai-Limited/.github/workflows/terraform/checkov@main
         with:
           terraform_workspace: "default"
@@ -30,7 +35,7 @@ jobs:
   plan:
     name: "Plan"
     concurrency: ci-${{ github.ref }}
-    needs: [checks]
+    needs: [lint, checkov]
     runs-on: ubuntu-latest
     strategy:
       matrix:
