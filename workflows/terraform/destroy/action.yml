@@ -72,3 +72,4 @@ runs:
       if: steps.apply.outcome == 'failure'
       shell: bash
       run: exit 1
+
