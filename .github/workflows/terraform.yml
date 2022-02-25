@@ -1,0 +1,73 @@
+name: "Terraform"
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        terraform_workspace: ["staging", "production"]
+    steps:
+      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/lint.yml
+        with:
+          terraform_workspace: ${{ matrix.terraform_workspace }}
+          terraform_version: ${{ inputs.terraform_version }}
+          github_token: ${{ secrets.github_token }}
+
+  checkov:
+    name: "Checkov"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        terraform_workspace: ["staging", "production"]
+    steps:
+      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/checkov.yml
+        with:
+          terraform_workspace: ${{ matrix.terraform_workspace }}
+          terraform_version: ${{ inputs.terraform_version }}
+          github_token: ${{ secrets.github_token }}
+
+  plan:
+    name: "Plan"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        terraform_workspace: ["staging", "production"]
+    steps:
+      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/plan.yml
+        with:
+          terraform_workspace: ${{ matrix.terraform_workspace }}
+          terraform_version: ${{ inputs.terraform_version }}
+          github_token: ${{ secrets.github_token }}
+
+  apply_staging:
+    name: "Apply Staging"
+    if: github.event_name == "push" && github.ref == "refs/heads/main"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/apply.yml
+        with:
+          terraform_workspace: "staging"
+          terraform_version: ${{ inputs.terraform_version }}
+          github_token: ${{ secrets.github_token }}
+
+  apply_production:
+    name: "Apply Production"
+    runs-on: ubuntu-latest
+    if: github.event_name == "push" && startsWith(github.ref, "refs/tags/v")
+    steps:
+      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/apply.yml
+        with:
+          terraform_workspace: "production"
+          terraform_version: ${{ inputs.terraform_version }}
+          github_token: ${{ secrets.github_token }}
