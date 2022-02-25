@@ -84,6 +84,6 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform LintStatus
-      if: steps.lint.exitcode != '0'
+      if: steps.lint.exitcode != 0
       shell: bash
       run: exit 1
