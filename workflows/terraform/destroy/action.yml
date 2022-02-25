@@ -80,4 +80,3 @@ runs:
       if: steps.destroy.success == 'false'
       shell: bash
       run: exit 1
-
