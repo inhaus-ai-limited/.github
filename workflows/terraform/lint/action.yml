@@ -81,8 +81,8 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### TFLint (${{ steps.time.outputs.time }})
-          #### TFLint Init  ${{ [[ steps.init.success == 'false' ]] && { echo  "failed! ❌" } || { echo "succeeded! ✅" }}}
-          #### TFLint Lint  ${{ [[ steps.lint.success == 'false' ]] && { echo  "failed! ❌" } || { echo "succeeded! ✅" }}}
+          #### TFLint Init  ${{ steps.init.success == 'false' && "failed! ❌" || "succeeded! ✅" }}
+          #### TFLint Lint  ${{ steps.lint.success == 'false' && "failed! ❌" || "succeeded! ✅" }}
 
           <details><summary>Show Result</summary>
 
