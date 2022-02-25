@@ -76,7 +76,7 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Destroy
-          ${{ steps.destroy.exitcode == 0 && Terraform destroy succeeded! ✅' || 'Terraform destroy failed! ❌' }}
+          ${{ steps.destroy.exitcode == 0 && 'Terraform destroy succeeded! ✅' || 'Terraform destroy failed! ❌' }}
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
           *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
