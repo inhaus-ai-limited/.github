@@ -32,7 +32,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform select workspace
       shell: bash
       id: workspace
@@ -42,7 +42,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - uses: terraform-linters/setup-tflint@v1
       name: Setup TFLint
       with:
@@ -55,7 +55,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Run TFLint
       id: lint
       shell: bash
@@ -65,7 +65,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -89,8 +89,8 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### TFLint (${{ steps.time.outputs.time }})
-          #### TFLint Init ${{ steps.init.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
-          #### TFLint Lint ${{ steps.lint.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
+          #### TFLint Init ${{ steps.init.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
+          #### TFLint Lint ${{ steps.lint.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
 
           <details><summary>Show Result</summary>
 
@@ -106,6 +106,6 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform LintStatus
-      if: steps.lint.success == 'false'
+      if: steps.lint.exitCode != '0'
       shell: bash
       run: exit 1

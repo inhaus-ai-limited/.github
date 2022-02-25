@@ -32,7 +32,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform select workspace
       id: workspace
       shell: bash
@@ -42,7 +42,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform Validate
       id: validate
       shell: bash
@@ -52,7 +52,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Terraform Destroy
       id: destroy
       shell: bash
@@ -62,7 +62,7 @@ runs:
         exitCode=$?
         set -e
         echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=success::$(echo $exitCode == 0)"
+        echo "::set-output name=exitCode::$(echo $exitCode)"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -86,7 +86,7 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Destroy
-          ${{ steps.destroy.success == 'false' && 'Terraform destroy failed! ❌' || 'Terraform destroy succeeded! ✅' }}
+          ${{ steps.destroy.exitCode != '0' && 'Terraform destroy failed! ❌' || 'Terraform destroy succeeded! ✅' }}
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
           *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
@@ -94,6 +94,6 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform Plan Status
-      if: steps.destroy.success == 'false'
+      if: steps.destroy.exitCode != '0'
       shell: bash
       run: exit 1
