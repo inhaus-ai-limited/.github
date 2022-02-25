@@ -27,24 +27,30 @@ runs:
       id: init
       shell: bash
       run: |
+        set +e
         result=$(terraform init)
         exitCode=$?
+        set -e
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Terraform select workspace
       id: workspace
       shell: bash
       run: |
+        set +e
         result=$(terraform workspace select ${{ inputs.terraform_workspace }})
         exitCode=$?
+        set -e
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Terraform Validate
       id: validate
       shell: bash
       run: |
+        set +e
         result=$(terraform validate -no-color)
         exitCode=$?
+        set -e
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Terraform Plan
@@ -52,8 +58,10 @@ runs:
       shell: bash
       if: github.event_name == 'pull_request'
       run: |
+        set +e
         result=$(terraform plan -no-color)
         exitCode=$?
+        set -e
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Find Comment

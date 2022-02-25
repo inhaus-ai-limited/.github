@@ -27,16 +27,20 @@ runs:
       id: init
       shell: bash
       run: |
+        set +e
         result=$(terraform init)
         exitCode=$?
+        set -e
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Terraform select workspace
       shell: bash
       id: workspace
       run: |
+        set +e
         result=$(terraform workspace select ${{ inputs.terraform_workspace }})
         exitCode=$?
+        set -e
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
     - uses: terraform-linters/setup-tflint@v1
@@ -46,16 +50,20 @@ runs:
     - name: Init TFLint
       shell: bash
       run: |
+        set +e
         result=$(tflint --init)
         exitCode=$?
+        set -e
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Run TFLint
       id: lint
       shell: bash
       run: |
+        set +e
         result=$(tflint -f compact --module)
         exitCode=$?
+        set -e
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
     - name: Find Comment
