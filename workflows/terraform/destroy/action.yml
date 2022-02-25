@@ -28,39 +28,19 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        set +e
-        result=$(terraform init)
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: terraform init || true
     - name: Terraform Validate
       id: validate
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        set +e
-        result=$(terraform validate -no-color)
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: terraform validate -no-color || true
     - name: Terraform Destroy
       id: destroy
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        set +e
-        result=$(terraform destroy -auto-approve)
-        exitCode=$?
-        set -e
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: terraform destroy -auto-approve || true
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -84,7 +64,7 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Destroy
-          ${{ steps.destroy.exitCode != '0' && 'Terraform destroy failed! ❌' || 'Terraform destroy succeeded! ✅' }}
+          ${{ steps.destroy.exitcode == '0' && Terraform destroy succeeded! ✅' || 'Terraform destroy failed! ❌' }}
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
           *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
@@ -92,6 +72,6 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform Plan Status
-      if: steps.destroy.exitCode != '0'
+      if: steps.destroy.exitcode != '0'
       shell: bash
       run: exit 1

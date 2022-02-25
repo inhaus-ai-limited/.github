@@ -28,41 +28,20 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        set +e
-        result=$(terraform init)
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: terraform init || true
     - name: Terraform Validate
       id: validate
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        set +e
-        result=$(terraform validate -no-color)
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: terraform validate -no-color || true
     - name: Terraform Plan
       id: plan
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       if: github.event_name == 'pull_request'
-      run: |
-        set +e
-        result=$(terraform plan -no-color)
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: terraform plan -no-color || true
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -86,14 +65,14 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Plan (${{ inputs.terraform_workspace }})
-          #### Terraform Initialization ${{ steps.init.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
-          #### Terraform Validation ${{ steps.validate.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
-          #### Terraform Plan ${{ steps.plan.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
+          #### Terraform Initialization ${{ steps.init.exitcode == '0' && 'success! ✅' || 'failed! ❌' }}
+          #### Terraform Validation ${{ steps.validate.exitcode == '0' && 'success! ✅' || 'failed! ❌' }}
+          #### Terraform Plan ${{ steps.plan.exitcode == '0' && 'success! ✅' || 'failed! ❌' }}
 
           <details><summary>Show Result</summary>
 
           ```terraform
-          ${{ steps.plan.outputs.result }}
+          ${{ steps.plan.exitcode == '0' && steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
           ```
 
           </details>
@@ -105,6 +84,6 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform Plan Status
-      if: steps.plan.exitCode != '0'
+      if: steps.plan.exitcode != '0'
       shell: bash
       run: exit 1
