@@ -26,19 +26,27 @@ runs:
     - name: Terraform Init
       id: init
       shell: bash
-      run: terraform init
+      run: |
+        terraform init || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Terraform select workspace
       id: workspace
       shell: bash
-      run: terraform workspace select ${{ inputs.terraform_workspace }}
+      run: |
+        terraform workspace select ${{ inputs.terraform_workspace }} || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Terraform Validate
       id: validate
       shell: bash
-      run: terraform validate -no-color
+      run: |
+        terraform validate -no-color || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Terraform Apply
       id: apply
       shell: bash
-      run: terraform apply -auto-approve
+      run: |
+        terraform apply -auto-approve || true
+        echo "::set-output name=success::$($? == 0)"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -60,7 +68,7 @@ runs:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          ${{ steps.apply.outcome == 'failure' ? "Terraform apply failed! ❌" : "Terraform apply succeeded! ✅"}}
+          ${{ steps.apply.success == 'false' ? "Terraform apply failed! ❌" : "Terraform apply succeeded! ✅"}}
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
           *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
@@ -69,5 +77,5 @@ runs:
         edit-mode: replace
     - name: Terraform Plan Status
       shell: bash
-      if: steps.apply.outcome == 'failure'
+      if: steps.apply.success == 'false'
       run: exit 1
