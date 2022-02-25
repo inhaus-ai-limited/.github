@@ -10,6 +10,9 @@ on:
     tags:
       - "v*"
 
+env:
+  SOME_VAR: "some value"
+
 jobs:
   lint:
     name: "Lint"
@@ -19,7 +22,7 @@ jobs:
       - uses: InHaus-Ai-Limited/.github/workflows/terraform/lint@main
         with:
           terraform_workspace: "default"
-          terraform_version: ${{ inputs.terraform_version }}
+          terraform_version: "1.1.4"
           github_token: ${{ secrets.github_token }}
   checkov:
     name: "Checkov"
@@ -29,7 +32,7 @@ jobs:
       - uses: InHaus-Ai-Limited/.github/workflows/terraform/checkov@main
         with:
           terraform_workspace: "default"
-          terraform_version: ${{ inputs.terraform_version }}
+          terraform_version: "1.1.4"
           github_token: ${{ secrets.github_token }}
 
   plan:
@@ -44,31 +47,37 @@ jobs:
       - uses: InHaus-Ai-Limited/.github/workflows/terraform/plan@main
         with:
           terraform_workspace: ${{ matrix.terraform_workspace }}
-          terraform_version: ${{ inputs.terraform_version }}
+          terraform_version: "1.1.4"
           github_token: ${{ secrets.github_token }}
 
   apply_staging:
     name: "Apply Staging"
     needs: [plan]
     concurrency: staging
+    environment:
+      name: staging
+      url: https://${{ env.TF_VAR_cluster_name }}-test.${{ env.TF_VAR_zone_name }}.inhausai-infra.services
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: InHaus-Ai-Limited/.github/workflows/terraform/apply@main
         with:
           terraform_workspace: "staging"
-          terraform_version: ${{ inputs.terraform_version }}
+          terraform_version: "1.1.4"
           github_token: ${{ secrets.github_token }}
 
   apply_production:
     name: "Apply Production"
     needs: [plan]
     concurrency: production
+    environment:
+      name: production
+      url: https://${{ env.TF_VAR_cluster_name }}.${{ env.TF_VAR_zone_name }}.inhausai-infra.services
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: InHaus-Ai-Limited/.github/workflows/terraform/apply@main
         with:
           terraform_workspace: "production"
-          terraform_version: ${{ inputs.terraform_version }}
+          terraform_version: "1.1.4"
           github_token: ${{ secrets.github_token }}

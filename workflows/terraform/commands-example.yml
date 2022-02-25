@@ -1,0 +1,39 @@
+name: Commands
+
+on:
+  issue_comment:
+    types: [created]
+
+env:
+  SOME_VAR: "some value"
+
+jobs:
+  destroy_production:
+    name: "Destroy Production"
+    concurrency: production
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == 'terraform destroy production' }}
+    environment:
+      name: production
+      url: https://${{ env.TF_VAR_cluster_name }}.${{ env.TF_VAR_zone_name }}.inhausai-infra.services
+    runs-on: ubuntu-latest
+    steps:
+      - uses: InHaus-Ai-Limited/.github/workflows/terraform/destroy@main
+        with:
+          terraform_workspace: "production"
+          terraform_version: "1.1.4"
+          github_token: ${{ secrets.github_token }}
+
+  destroy_staging:
+    name: "Destroy Staging"
+    concurrency: staging
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == 'terraform destroy staging' }}
+    environment:
+      name: staging
+      url: https://${{ env.TF_VAR_cluster_name }}-test.${{ env.TF_VAR_zone_name }}.inhausai-infra.services
+    runs-on: ubuntu-latest
+    steps:
+      - uses: InHaus-Ai-Limited/.github/workflows/terraform/destroy@main
+        with:
+          terraform_workspace: "staging"
+          terraform_version: "1.1.4"
+          github_token: ${{ secrets.github_token }}
