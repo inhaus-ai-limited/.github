@@ -63,7 +63,7 @@ runs:
       with:
         issue-number: ${{ github.event.pull_request.number }}
         comment-author: "github-actions[bot]"
-        body-includes: "Bot Ref: 8643624023"
+        body-includes: "Bot Ref: 8643624023-${{ inputs.terraform_workspace }}"
     - name: Set current date as env variable
       if: github.event_name == 'pull_request'
       id: time
@@ -99,7 +99,7 @@ runs:
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
           *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
-          *Bot Ref: 8643624023*
+          *Bot Ref: 8643624023-${{ inputs.terraform_workspace }}*
         reactions: rocket
         edit-mode: replace
     - name: Terraform Plan Status
