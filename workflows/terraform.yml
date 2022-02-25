@@ -18,7 +18,7 @@ jobs:
       matrix:
         terraform_workspace: ["staging", "production"]
     steps:
-      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/lint.yml
+      - uses: InHaus-AI-Limited/.github/workflows/terraform/lint.yml@main
         with:
           terraform_workspace: ${{ matrix.terraform_workspace }}
           terraform_version: ${{ inputs.terraform_version }}
@@ -31,7 +31,7 @@ jobs:
       matrix:
         terraform_workspace: ["staging", "production"]
     steps:
-      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/checkov.yml
+      - uses: InHaus-AI-Limited/.github/workflows/terraform/checkov.yml@main
         with:
           terraform_workspace: ${{ matrix.terraform_workspace }}
           terraform_version: ${{ inputs.terraform_version }}
@@ -44,7 +44,7 @@ jobs:
       matrix:
         terraform_workspace: ["staging", "production"]
     steps:
-      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/plan.yml
+      - uses: InHaus-AI-Limited/.github/workflows/terraform/plan.yml@main
         with:
           terraform_workspace: ${{ matrix.terraform_workspace }}
           terraform_version: ${{ inputs.terraform_version }}
@@ -55,7 +55,7 @@ jobs:
     if: github.event_name == "push" && github.ref == "refs/heads/main"
     runs-on: ubuntu-latest
     steps:
-      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/apply.yml
+      - uses: InHaus-AI-Limited/.github/workflows/terraform/apply.yml@main
         with:
           terraform_workspace: "staging"
           terraform_version: ${{ inputs.terraform_version }}
@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == "push" && startsWith(github.ref, "refs/tags/v")
     steps:
-      - uses: github.com/InHaus-AI-Limited/.github/workflows/terraform/apply.yml
+      - uses: InHaus-AI-Limited/.github/workflows/terraform/apply.yml@main
         with:
           terraform_workspace: "production"
           terraform_version: ${{ inputs.terraform_version }}
