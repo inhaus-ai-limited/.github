@@ -28,45 +28,22 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        set +e
-        result=$(terraform init)
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: terraform init || true
     - uses: terraform-linters/setup-tflint@v1
       name: Setup TFLint
-      env:
-        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       with:
         tflint_version: v0.29.0
     - name: Init TFLint
       shell: bash
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
-      run: |
-        set +e
-        result=$(tflint --init)
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: tflint --init || true
     - name: Run TFLint
       id: lint
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        set +e
-        result=$(tflint -f compact --module)
-        exitCode=$?
-        set -e
-        echo $result
-        echo "::set-output name=result::$(echo $result)"
-        echo "::set-output name=exitCode::$(echo $exitCode)"
+      run: tflint -f compact --module || true
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -90,13 +67,13 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### TFLint (${{ steps.time.outputs.time }})
-          #### TFLint Init ${{ steps.init.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
-          #### TFLint Lint ${{ steps.lint.exitCode != '0' && 'failed! ❌' || 'succeeded! ✅' }}
+          #### TFLint Init ${{ steps.init.exitcode == 0 && 'succeeded! ✅' || 'failed! ❌' }}
+          #### TFLint Lint ${{ steps.lint.exitcode == 0 && 'succeeded! ✅' || 'failed! ❌' }}
 
           <details><summary>Show Result</summary>
 
           ```bash
-          ${{ steps.lint.outputs.result}}
+          ${{ steps.init.exitcode == 0 && steps.lint.outputs.stdout || steps.lint.outputs.stderr }}
           ```
 
           </details>
@@ -107,6 +84,6 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform LintStatus
-      if: steps.lint.exitCode != '0'
+      if: steps.lint.exitcode != '0'
       shell: bash
       run: exit 1
