@@ -91,10 +91,13 @@ runs:
           ### TFLint (${{ steps.time.outputs.time }})
           #### TFLint Init ${{ steps.init.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
           #### TFLint Lint ${{ steps.lint.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
-          <details><summary>Schow Result</summary>
+
+          <details><summary>Show Result</summary>
+
           ```bash
           ${{ steps.lint.outputs.result}}
           ```
+
           </details>
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*

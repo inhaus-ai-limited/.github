@@ -90,10 +90,13 @@ runs:
           #### Terraform Initialization ${{ steps.init.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
           #### Terraform Validation ${{ steps.validate.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
           #### Terraform Plan ${{ steps.plan.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
+
           <details><summary>Show Result</summary>
+
           ```terraform
           ${{ steps.plan.outputs.result }}
           ```
+
           </details>
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
