@@ -79,16 +79,22 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Plan (${{ steps.time.outputs.time }})
-          #### Terraform Initialization ${{ steps.init.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
-          #### Terraform Validation ${{ steps.validate.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
-          #### Terraform Plan ${{ steps.plan.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}
+          <details><summary>Terraform Initialization ${{ steps.init.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}</summary>
+          ```terraform
+          ${{ steps.init.outputs.result }}
+          ```
+          </details>
 
-          <details><summary>Show Plan</summary>
+          <details><summary>Terraform Validation ${{ steps.validate.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}</summary>
+          ```terraform
+          ${{ steps.validate.outputs.result }}
+          ```
+          </details>
 
+          <details><summary>Terraform Plan ${{ steps.plan.success == 'false' && 'failed! ❌' || 'succeeded! ✅' }}</summary>
           ```terraform
           ${{ steps.plan.outputs.result }}
           ```
-
           </details>
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
