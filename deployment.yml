@@ -1,0 +1,46 @@
+name: "Terraform"
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  tflint:
+    name: "TFLint"
+    runs-on: ubuntu-latest
+    if: github.event_name == "pull_request"
+    steps:
+      - uses: actions/checkout@v2
+        name: "Checkout"
+      - uses: terraform-linters/setup-tflint@v1
+        name: "Setup TFLint"
+        with:
+          tflint_version: v0.29.0
+      - name: "TFLint Init"
+        run: tflint --init
+      - name: "TFLint Run"
+        run: tflint -f compact
+
+  staging:
+    name: "Staging"
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, "refs/heads/") && github.event_name == "push"
+    environment: staging
+    concurrency: staging
+    steps:
+      -
+
+  production:
+    name: "Production"
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, "refs/tags/") && github.event_name == "push"
+    environment: production
+    concurrency: production
+    steps:
+      -
