@@ -43,8 +43,7 @@ runs:
       id: validate
       shell: bash
       run: |
-        terraform validate -no-color ||
-        result=$(terraform workspace select ${{ inputs.terraform_workspace }})
+        result=$(terraform validate -no-color )
         exitCode=$?
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
@@ -53,8 +52,7 @@ runs:
       shell: bash
       if: github.event_name == 'pull_request'
       run: |
-        terraform plan -no-color ||
-        result=$(terraform workspace select ${{ inputs.terraform_workspace }})
+        result=$(terraform plan -no-color)
         exitCode=$?
         echo "::set-output name=result::$(echo $result)"
         echo "::set-output name=success::$(echo $exitCode == 0)"
