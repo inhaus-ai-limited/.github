@@ -84,6 +84,5 @@ runs:
         reactions: rocket
         edit-mode: replace
     - name: Terraform Plan Status
-      if: steps.plan.exitcode != 0
       shell: bash
-      run: exit 1
+      run: ${{ steps.plan.exitcode }}

@@ -71,7 +71,6 @@ runs:
           *Bot Ref: 8643624073-${{ inputs.terraform_workspace }}*
         reactions: rocket
         edit-mode: replace
-    - name: Terraform Plan Status
+    - name: Terraform Apply Status
       shell: bash
-      if: steps.apply.exitcode != 0
-      run: exit 1
+      run: ${{ steps.apply.exitcode }}
