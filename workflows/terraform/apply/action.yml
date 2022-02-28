@@ -41,7 +41,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
-        echo "terraform init"
+        echo "::group::terraform init"
         set +e
         result=$(terraform init)
         result="${result//$'\\n'/''}"
@@ -49,11 +49,12 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Terraform Apply
       id: apply
       shell: bash
       run: |
-        echo "terraform apply -auto-approve"
+        echo "::group::terraform apply -auto-approve"
         set +e
         result=$(terraform apply -auto-approve)
         result="${result//$'\\n'/''}"
@@ -61,6 +62,7 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
