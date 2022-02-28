@@ -43,6 +43,7 @@ runs:
       run: |
         set +e
         result=$(terraform init)
+        result="${result//$'\\n'/''}"
         code=$?
         set -e
         echo "${result}"
@@ -56,6 +57,7 @@ runs:
       run: |
         set +e
         result=$(terraform plan -no-color)
+        result="${result//$'\\n'/''}"
         code=$?
         set -e
         echo "${result}"
@@ -102,4 +104,4 @@ runs:
         edit-mode: replace
     - name: Terraform Plan Status
       shell: bash
-      run: ${{ steps.plan.outputs.exit_code }}
+      run: exit ${{ steps.plan.outputs.exit_code }}

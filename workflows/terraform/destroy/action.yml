@@ -43,6 +43,7 @@ runs:
       run: |
         set +e
         result=$(terraform init)
+        result="${result//$'\\n'/''}"
         code=$?
         set -e
         echo "${result}"
@@ -55,6 +56,7 @@ runs:
       run: |
         set +e
         result=$(terraform destroy -auto-approve)
+        result="${result//$'\\n'/''}"
         code=$?
         set -e
         echo "${result}"
