@@ -43,6 +43,7 @@ runs:
       run: |
         set +e
         result=$(terraform init)
+        result="${result//$'\\n'/''}"
         code=$?
         set -e
         echo "${result}"
@@ -59,6 +60,7 @@ runs:
       run: |
         set +e
         result=$(terraform validate -no-color)
+        result="${result//$'\\n'/''}"
         code=$?
         set -e
         echo "${result}"
@@ -70,6 +72,7 @@ runs:
       run: |
         set +e
         result=$(tflint --init)
+        result="${result//$'\\n'/''}"
         code=$?
         set -e
         echo "${result}"
@@ -82,6 +85,7 @@ runs:
       run: |
         set +e
         result=$(tflint -f compact --module)
+        result="${result//$'\\n'/''}"
         code=$?
         set -e
         echo "${result}"
@@ -128,4 +132,4 @@ runs:
         edit-mode: replace
     - name: Terraform Lint Status
       shell: bash
-      run: ${{ steps.lint.outputs.exit_code }}
+      run: exit ${{ steps.lint.outputs.exit_code }}
