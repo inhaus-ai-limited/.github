@@ -41,6 +41,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
+        echo "terraform init"
         set +e
         result=$(terraform init)
         result="${result//$'\\n'/''}"
@@ -52,6 +53,7 @@ runs:
       id: apply
       shell: bash
       run: |
+        echo "terraform apply -auto-approve"
         set +e
         result=$(terraform apply -auto-approve)
         result="${result//$'\\n'/''}"
