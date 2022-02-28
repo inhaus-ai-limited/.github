@@ -41,7 +41,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
-        echo "terraform init"
+        echo "::group::terraform init"
         set +e
         result=$(terraform init)
         result="${result//$'\\n'/''}"
@@ -49,6 +49,7 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Terraform Plan
       id: plan
       env:
@@ -56,7 +57,7 @@ runs:
       shell: bash
       if: github.event_name == 'pull_request'
       run: |
-        echo "terraform plan -no-color"
+        echo "::group::terraform plan -no-color"
         set +e
         result=$(terraform plan -no-color)
         result="${result//$'\\n'/''}"
@@ -64,6 +65,7 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1

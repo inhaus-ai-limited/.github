@@ -41,7 +41,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
-        echo "terraform init"
+        echo "::group::terraform init"
         set +e
         result=$(terraform init)
         result="${result//$'\\n'/''}"
@@ -49,13 +49,14 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Terraform Destroy
       id: destroy
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
-        echo "terraform destroy -auto-approve"
+        echo "::group::terraform destroy -auto-approve"
         set +e
         result=$(terraform destroy -auto-approve)
         result="${result//$'\\n'/''}"
@@ -63,6 +64,7 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1

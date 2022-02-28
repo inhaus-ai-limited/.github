@@ -41,7 +41,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
-        echo "terraform init"
+        echo "::group::terraform init"
         set +e
         result=$(terraform init)
         result="${result//$'\\n'/''}"
@@ -49,6 +49,7 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - uses: terraform-linters/setup-tflint@v1
       name: Setup TFLint
       with:
@@ -59,7 +60,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
-        echo "terraform validate -no-color"
+        echo "::group::terraform validate -no-color"
         set +e
         result=$(terraform validate -no-color)
         result="${result//$'\\n'/''}"
@@ -67,12 +68,13 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Init TFLint
       shell: bash
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       run: |
-        echo "tflint --init"
+        echo "::group::tflint --init"
         set +e
         result=$(tflint --init)
         result="${result//$'\\n'/''}"
@@ -80,20 +82,22 @@ runs:
         set -e
         echo "${result}"
         echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Run TFLint
       id: lint
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
-        echo "tflint -f compact --module"
-        set +e
-        result=$(tflint -f compact --module)
-        result="${result//$'\\n'/''}"
-        code=$?
-        set -e
-        echo "${result}"
-        echo "::set-output name=exit_code::${code}"
+        echo "::group::tflint -f compact --module"
+         set +e
+         result=$(tflint -f compact --module)
+         result="${result//$'\\n'/''}"
+         code=$?
+         set -e
+         echo "${result}"
+         echo "::set-output name=exit_code::${code}"
+         echo "::endgroup::"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
