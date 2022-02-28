@@ -136,4 +136,4 @@ runs:
         edit-mode: replace
     - name: Terraform Lint Status
       shell: bash
-      run: exit ${{ steps.lint.outputs.exit_code }}
+      run: exit ${{ steps.lint.outputs.exit_code || steps.validate.outputs.exit_code || steps.init.outputs.exit_code }}
