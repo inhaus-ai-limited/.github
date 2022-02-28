@@ -40,19 +40,13 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: terraform init || true
-    - name: Terraform Validate
-      id: validate
-      env:
-        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
-      shell: bash
-      run: terraform validate -no-color || true
+      run: terraform init
     - name: Terraform Destroy
       id: destroy
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: terraform destroy -auto-approve || true
+      run: terraform destroy -auto-approve
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1

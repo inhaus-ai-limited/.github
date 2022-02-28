@@ -40,22 +40,28 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: terraform init || true
+      run: terraform init
     - uses: terraform-linters/setup-tflint@v1
       name: Setup TFLint
       with:
         tflint_version: v0.29.0
+    - name: Terraform Validate
+      id: validate
+      env:
+        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
+      shell: bash
+      run: terraform validate -no-color
     - name: Init TFLint
       shell: bash
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
-      run: tflint --init || true
+      run: tflint --init
     - name: Run TFLint
       id: lint
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: tflint -f compact --module || true
+      run: tflint -f compact --module
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
