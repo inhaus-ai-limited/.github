@@ -40,11 +40,23 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: terraform init
+      run: |
+        set +e
+        result=$(terraform init)
+        code=$?
+        set -e
+        echo "${result}"
+        echo "::set-output name=exit_code::${code}"
     - name: Terraform Apply
       id: apply
       shell: bash
-      run: terraform apply -auto-approve
+      run: |
+        set +e
+        result=$(terraform apply -auto-approve)
+        code=$?
+        set -e
+        echo "${result}"
+        echo "::set-output name=exit_code::${code}"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -68,8 +80,8 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Apply
-          #### Terraform Init ${{ steps.init.exitcode == 0 && 'succeeded! ✅' || 'failed! ❌' }}
-          #### Terraform Apply ${{ steps.apply.exitcode == 0 && 'succeeded! ✅' || 'failed! ❌' }}
+          #### Terraform Init ${{ steps.init.outputs.exit_code == 0 && 'succeeded! ✅' || 'failed! ❌' }}
+          #### Terraform Apply ${{ steps.apply.outputs.exit_code == 0 && 'succeeded! ✅' || 'failed! ❌' }}
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
           *Build: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
@@ -78,4 +90,4 @@ runs:
         edit-mode: replace
     - name: Terraform Apply Status
       shell: bash
-      run: ${{ steps.apply.exitcode }}
+      run: exit ${{ steps.apply.outputs.exit_code }}
