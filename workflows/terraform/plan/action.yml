@@ -40,14 +40,26 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: terraform init
+      run: |
+        set +e
+        result=$(terraform init)
+        code=$?
+        set -e
+        echo "${result}"
+        echo "::set-output name=exit_code::${code}"
     - name: Terraform Plan
       id: plan
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       if: github.event_name == 'pull_request'
-      run: terraform plan -no-color
+      run: |
+        set +e
+        result=$(terraform plan -no-color)
+        code=$?
+        set -e
+        echo "${result}"
+        echo "::set-output name=exit_code::${code}"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -71,14 +83,13 @@ runs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Plan (${{ inputs.terraform_workspace }})
-          #### Terraform Initialization ${{ steps.init.exitcode == 0 && 'success! ✅' || 'failed! ❌' }}
-          #### Terraform Validation ${{ steps.validate.exitcode == 0 && 'success! ✅' || 'failed! ❌' }}
-          #### Terraform Plan ${{ steps.plan.exitcode == 0 && 'success! ✅' || 'failed! ❌' }}
+          #### Terraform Initialization ${{ steps.init.outputs.exit_code == 0 && 'success! ✅' || 'failed! ❌' }}
+          #### Terraform Plan ${{ steps.plan.outputs.exit_code == 0 && 'success! ✅' || 'failed! ❌' }}
 
           <details><summary>Show Result</summary>
 
           ```terraform
-          ${{ steps.plan.exitcode == '0' && steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
+          ${{ steps.plan.exit_code == '0' && steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
           ```
 
           </details>
@@ -91,4 +102,4 @@ runs:
         edit-mode: replace
     - name: Terraform Plan Status
       shell: bash
-      run: ${{ steps.plan.exitcode }}
+      run: ${{ steps.plan.outputs.exit_code }}
