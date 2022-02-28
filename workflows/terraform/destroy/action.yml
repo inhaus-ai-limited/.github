@@ -41,6 +41,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
+        echo "terraform init"
         set +e
         result=$(terraform init)
         result="${result//$'\\n'/''}"
@@ -54,6 +55,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
+        echo "terraform destroy -auto-approve"
         set +e
         result=$(terraform destroy -auto-approve)
         result="${result//$'\\n'/''}"

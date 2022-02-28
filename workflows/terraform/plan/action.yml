@@ -41,6 +41,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       run: |
+        echo "terraform init"
         set +e
         result=$(terraform init)
         result="${result//$'\\n'/''}"
@@ -55,6 +56,7 @@ runs:
       shell: bash
       if: github.event_name == 'pull_request'
       run: |
+        echo "terraform plan -no-color"
         set +e
         result=$(terraform plan -no-color)
         result="${result//$'\\n'/''}"
@@ -91,7 +93,7 @@ runs:
           <details><summary>Show Result</summary>
 
           ```terraform
-          ${{ steps.plan.exit_code == '0' && steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
+          ${{ steps.plan.outputs.exit_code == '0' && steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
           ```
 
           </details>
