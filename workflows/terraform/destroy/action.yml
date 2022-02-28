@@ -95,4 +95,4 @@ runs:
         edit-mode: replace
     - name: Terraform Destroy Status
       shell: bash
-      run: exit ${{ steps.destroy.outputs.exit_code }}
+      run: exit ${{ steps.destroy.outputs.exit_code || steps.init.outputs.exit_code }}

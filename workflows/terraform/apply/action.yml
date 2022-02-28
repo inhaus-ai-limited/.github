@@ -94,4 +94,4 @@ runs:
         edit-mode: replace
     - name: Terraform Apply Status
       shell: bash
-      run: exit ${{ steps.apply.outputs.exit_code }}
+      run: exit ${{ steps.apply.outputs.exit_code || steps.init.outputs.exit_code }}

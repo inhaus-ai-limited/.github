@@ -106,4 +106,4 @@ runs:
         edit-mode: replace
     - name: Terraform Plan Status
       shell: bash
-      run: exit ${{ steps.plan.outputs.exit_code }}
+      run: exit ${{ steps.plan.outputs.exit_code || steps.init.outputs.exit_code }}
