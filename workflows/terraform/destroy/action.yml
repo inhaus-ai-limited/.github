@@ -8,7 +8,7 @@ inputs:
     required: false
   terraform_version:
     description: "The Terraform version to use"
-    default: "0.12.28"
+    default: "1.1.6"
     required: false
   github_token:
     description: "The GitHub token to use"
@@ -39,6 +39,7 @@ runs:
       id: init
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
+
       shell: bash
       run: |
         echo "::group::terraform init"
