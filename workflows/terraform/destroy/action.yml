@@ -19,18 +19,6 @@ runs:
   steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Cache
-      uses: actions/cache@v2
-      env:
-        cache-name: terraform-apply
-      with:
-        path: ./.terraform
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref }}-${{ inputs.terraform_workspace }}
-        restore-keys: |
-          ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref }}-${{ inputs.terraform_workspace }}
-          ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref }}-
-          ${{ runner.os }}-${{ env.cache-name }}-
-          ${{ runner.os }}-
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
       with:
