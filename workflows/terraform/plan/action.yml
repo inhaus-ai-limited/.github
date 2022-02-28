@@ -28,31 +28,13 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        echo "::group::terraform init"
-        set +e
-        result=$(terraform init)
-        result="${result//$'\\n'/''}"
-        code=$?
-        set -e
-        echo "${result}"
-        echo "::set-output name=exit_code::${code}"
-        echo "::endgroup::"
+      run: terraform init
     - name: Terraform Plan
       id: plan
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: |
-        echo "::group::terraform plan -no-color"
-        set +e
-        result=$(terraform plan -no-color)
-        result="${result//$'\\n'/''}"
-        code=$?
-        set -e
-        echo "${result}"
-        echo "::set-output name=exit_code::${code}"
-        echo "::endgroup::"
+      run: terraform plan -no-color || true
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -71,6 +53,8 @@ runs:
     - name: Create or Update comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/create-or-update-comment@v1
+      env:
+        PLAN: "${{ steps.plan.outputs.stdout }}"
       with:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
@@ -82,7 +66,7 @@ runs:
           <details><summary>Show Result</summary>
 
           ```terraform
-          ${{ steps.plan.outputs.exit_code == '0' && steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
+          ${{ env.PLAN }}
           ```
 
           </details>
