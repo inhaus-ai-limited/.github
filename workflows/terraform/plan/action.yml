@@ -53,20 +53,19 @@ runs:
     - name: Create or Update comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/create-or-update-comment@v1
-      env:
-        PLAN: "${{ steps.plan.outputs.stdout }}"
       with:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           ### Terraform Plan (${{ inputs.terraform_workspace }})
-          #### Terraform Initialization ${{ steps.init.outputs.exit_code == 0 && 'success! ✅' || 'failed! ❌' }}
-          #### Terraform Plan ${{ steps.plan.outputs.exit_code == 0 && 'success! ✅' || 'failed! ❌' }}
+          #### Terraform Initialization ${{ steps.init.exitcode == 0 && 'success! ✅' || 'failed! ❌' }}
+          #### Terraform Plan ${{ steps.plan.exitcode == 0 && 'success! ✅' || 'failed! ❌' }}
 
           <details><summary>Show Result</summary>
 
           ```terraform
-          ${{ env.PLAN }}
+          ${{ steps.plan.outputs.stdout }}
+          ${{ steps.plan.outputs.stderr }}
           ```
 
           </details>
@@ -79,4 +78,4 @@ runs:
         edit-mode: replace
     - name: Terraform Plan Status
       shell: bash
-      run: exit ${{ steps.plan.outputs.exit_code || steps.init.outputs.exit_code }}
+      run: exit ${{ steps.plan.exitcode || steps.init.exitcode }}
