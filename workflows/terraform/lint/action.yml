@@ -78,14 +78,14 @@ runs:
       shell: bash
       run: |
         echo "::group::tflint -f compact --module"
-         set +e
-         result=$(tflint -f compact --module)
-         result="${result//$'\\n'/''}"
-         code=$?
-         set -e
-         echo "${result}"
-         echo "::set-output name=exit_code::${code}"
-         echo "::endgroup::"
+        set +e
+        result=$(tflint -f compact --module)
+        result="${result//$'\\n'/''}"
+        code=$?
+        set -e
+        echo "${result}"
+        echo "::set-output name=exit_code::${code}"
+        echo "::endgroup::"
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
