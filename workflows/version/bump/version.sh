@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script Bumps the Git Version Tag
 # Usage:
-# ./bump-version.sh <PATCH|MINOR|MAJOR>
+# ./bump-version.sh <PATCH|MINOR|MAJOR> [MESSAGE]
 
 if [[ -z "$1" ]]; then
     echo "Usage: '$0 <PATCH|MINOR|MAJOR> <MESSAGE>' to run this command!\n"

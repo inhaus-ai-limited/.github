@@ -40,20 +40,14 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: terraform init || true
-    - name: Terraform Validate
-      id: validate
-      env:
-        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
-      shell: bash
-      run: terraform validate -no-color || true
+      run: terraform init
     - name: Terraform Plan
       id: plan
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
       if: github.event_name == 'pull_request'
-      run: terraform plan -no-color || true
+      run: terraform plan -no-color
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1

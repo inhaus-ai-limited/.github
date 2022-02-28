@@ -40,17 +40,11 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      run: terraform init || true
-    - name: Terraform Validate
-      id: validate
-      env:
-        TF_WORKSPACE: ${{ inputs.terraform_workspace }}
-      shell: bash
-      run: terraform validate -no-color || true
+      run: terraform init
     - name: Terraform Apply
       id: apply
       shell: bash
-      run: terraform apply -auto-approve || true
+      run: terraform apply -auto-approve
     - name: Find Comment
       if: github.event_name == 'pull_request'
       uses: peter-evans/find-comment@v1
@@ -75,7 +69,6 @@ runs:
         body: |
           ### Terraform Apply
           #### Terraform Init ${{ steps.init.exitcode == 0 && 'succeeded! ✅' || 'failed! ❌' }}
-          #### Terraform Validate ${{ steps.validate.exitcode == 0 && 'succeeded! ✅' || 'failed! ❌' }}
           #### Terraform Apply ${{ steps.apply.exitcode == 0 && 'succeeded! ✅' || 'failed! ❌' }}
 
           *Pusher: `@${{ github.actor }}`, Action: `${{ github.event_name }}`*
