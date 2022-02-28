@@ -43,7 +43,6 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.terraform_workspace }}
       shell: bash
-      if: github.event_name == 'pull_request'
       run: |
         echo "::group::terraform plan -no-color"
         set +e
