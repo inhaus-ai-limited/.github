@@ -78,4 +78,5 @@ runs:
         edit-mode: replace
     - name: Terraform Plan Status
       shell: bash
-      run: exit ${{ steps.plan.exitcode || steps.init.exitcode }}
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
