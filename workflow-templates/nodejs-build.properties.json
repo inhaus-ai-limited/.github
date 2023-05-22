@@ -1,0 +1,11 @@
+{
+  "name": "NodeJS build",
+  "description": "Builds a nodejs application",
+  "iconName": "example-icon",
+  "categories": [
+      "NodeJS"
+  ],
+  "filePatterns": [
+      "package.json$"
+  ]
+}

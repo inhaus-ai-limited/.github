@@ -1,0 +1,11 @@
+{
+  "name": "Kubernetes Deploy",
+  "description": "Deploy to kubernetes",
+  "iconName": "example-icon",
+  "categories": [
+      "Kubnernetes"
+  ],
+  "filePatterns": [
+      ".*"
+  ]
+}

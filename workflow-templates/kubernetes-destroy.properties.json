@@ -1,0 +1,11 @@
+{
+  "name": "Kubernetes destroy",
+  "description": "Destroys a kubernetes deployment",
+  "iconName": "example-icon",
+  "categories": [
+      "Kubernetes"
+  ],
+  "filePatterns": [
+      ".*"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Dependabot auto merge",
+  "description": "Automatically merges dependabot pull requests.",
+  "iconName": "example-icon",
+  "categories": [
+      "Dependabot"
+  ],
+  "filePatterns": [
+      ".*"
+  ]
+}
