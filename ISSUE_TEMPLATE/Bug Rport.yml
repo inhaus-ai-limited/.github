@@ -34,8 +34,6 @@ body:
         - label: macOS
         - label: Windows
         - label: Linux
-    validations:
-      required: true
   - type: dropdown
     id: version
     attributes:
@@ -66,7 +64,7 @@ body:
     attributes:
       label: Crash Report
       description: Please copy and paste the Crash report here. This will be automatically formatted into code, so no need for backticks.
-      render: shell
+      render: Shell
   - type: markdown
     attributes:
       value: |

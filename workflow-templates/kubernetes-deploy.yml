@@ -1,0 +1,72 @@
+name: Build & Deploy Pull Request
+
+on:
+  pull_request:
+    branches: [ $default-branch ]
+
+concurrency: 
+  group: ci_${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      CLUSTER_NAME: main-test
+    environment: 
+      name: pr-${{ github.event.number }}-Staging
+      url: https://pr-${{ github.event.number }}-${{ github.event.repository.name }}.main-test.inhausai-infra.services/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Kubectl tool installer
+        uses: Azure/setup-kubectl@v2.1
+        with:
+          version: 'v1.23.6'
+      - name: Install envsubst
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext-base
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+      - name: Setup kubeconfig
+        run: |
+          aws eks update-kubeconfig --region eu-west-2 --name $CLUSTER_NAME
+      - name: Get tag or commit sha
+        id: tag
+        run: |
+          tag="${GITHUB_SHA}"
+
+          if [[ ${GITHUB_REF} =~ "tags" ]]; then
+            ref="${GITHUB_REF}"
+            tag=$(echo $GITHUB_REF | sed 's/refs\/tags\///g')
+          fi
+
+          echo "::set-output name=tag::$tag"
+      - id: author
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: ${{ github.event.pull_request.user.login }}
+      - name: Inject env vars
+        env:
+          VERSION: ${{ github.repository_owner }}-${{ github.event.number }}
+          PREFIX: pr-${{ github.event.number }}-
+          NODE_ENV: 'staging'
+          SERVICE_DOMAIN: pr-${{ github.event.number }}-web-app.main-test.inhausai-infra.services
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          mkdir -p /tmp/deploy
+          for f in $(find deploy/ -regex '.*\.ya*ml'); do envsubst \$PR_NUMBER,\$SERVICE_DOMAIN,\$NODE_ENV,\$PREFIX,\$VERSION,\$CLUSTER_NAME,\$AWS_ACCESS_KEY_ID,\$AWS_SECRET_ACCESS_KEY,\$SENTRY_DSN < $f > "/tmp/deploy/$(basename $f)"; done
+      - name: ensure namespace exists
+        run: |
+          kubectl apply -f /tmp/deploy/namespace.yml
+      - name: kubectl apply
+        run: |
+          kubectl apply -f /tmp/deploy

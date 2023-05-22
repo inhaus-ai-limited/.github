@@ -1,19 +1,51 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 20
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 20
+    commit-message:
+      include: scope
+      prefix: "deps(npm): "
+    labels:
+      - "Type: Chore"
+      - "State: Pending"
+      - "Priority: Medium"
 
-- package-ecosystem: docker
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 20
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 20
+    commit-message:
+      include: scope
+      prefix: "deps(github-actions): "
+    labels:
+      - "Type: Chore"
+      - "State: Pending"
+      - "Priority: Medium"
 
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 20
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 20
+    commit-message:
+      include: scope
+      prefix: "deps(gitsubmodule): "
+    labels:
+      - "Type: Chore"
+      - "State: Pending"
+      - "Priority: Medium"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 20
+    commit-message:
+      include: scope
+      prefix: "deps(docker): "
+
+
