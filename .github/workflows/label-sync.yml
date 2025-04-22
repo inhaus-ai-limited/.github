@@ -10,9 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 🚀 Run Label Sync
-        uses: srealmoreno/label-sync-action@850ba5cef2b25e56c6c420c4feed0319294682fd
+        uses: EndBug/label-sync@v2.3.3
         with:
+          config-file: ./labels.yml
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
-          auto-discover-repos: true
-          account-type: org
-          owner: inhaus-ai-limited
+          delete-other-labels: true
