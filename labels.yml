@@ -82,3 +82,8 @@
   color: 0000ff
   description: Issue is of other type.
   aliases: [other]
+
+- name: "Type: Dependency"
+  color: 0000ff
+  description: Issue is a dependency.
+  aliases: [dependency]
