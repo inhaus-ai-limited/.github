@@ -1,89 +1,89 @@
 - name: "Priority: High"
-  color: ff0000
+  color: "ff0000"
   description: High priority issue.
   aliases: [high]
 
 - name: "Priority: Medium"
-  color: ffa500
+  color: "ffa500"
   description: Medium priority issue.
   aliases: [medium]
 
 - name: "Priority: Low"
-  color: 00ff00
+  color: "00ff00"
   description: Low priority issue.
   aliases: [low]
 
 - name: "Priority: None"
-  color: 000000
+  color: "000000"
   description: No priority assigned.
   aliases: [none]
 
 - name: "Status: In Progress"
-  color: 00ffff
+  color: "00ffff"
   description: Issue is being worked on.
   aliases: [in progress]
 
 - name: "Status: Blocked"
-  color: ff00ff
+  color: "ff00ff"
   description: Issue is blocked by another issue.
   aliases: [blocked]
 
 - name: "Status: Done"
-  color: 00ff00
+  color: "00ff00"
   description: Issue has been completed.
   aliases: [done]
 
 - name: "Status: Cancelled"
-  color: ff0000
+  color: "ff0000"
   description: Issue has been cancelled.
   aliases: [cancelled]
 
 - name: "Status: Pending"
-  color: ffa500
+  color: "ffa500"
   description: Issue is pending.
   aliases: [pending]
 
 - name: "Type: Bug"
-  color: ff0000
+  color: "ff0000"
   description: Issue is a bug.
   aliases: [bug]
 
 - name: "Type: Feature"
-  color: 00ff00
+  color: "00ff00"
   description: Issue is a feature request.
   aliases: [feature]
 
 - name: "Type: Enhancement"
-  color: 00ff00
+  color: "00ff00"
   description: Issue is an enhancement.
   aliases: [enhancement]
 
 - name: "Type: Documentation"
-  color: ffa500
+  color: "ffa500"
   description: Issue is a documentation issue.
   aliases: [documentation]
 
 - name: "Type: Task"
-  color: 00ffff
+  color: "00ffff"
   description: Issue is a task.
   aliases: [task]
 
 - name: "Type: Question"
-  color: ff00ff
+  color: "ff00ff"
   description: Issue is a question.
   aliases: [question]
 
 - name: "Type: Discussion"
-  color: 000000
+  color: "000000"
   description: Issue is a discussion.
   aliases: [discussion]
 
 - name: "Type: Other"
-  color: 0000ff
+  color: "0000ff"
   description: Issue is of other type.
   aliases: [other]
 
 - name: "Type: Dependency"
-  color: 0000ff
+  color: "0000ff"
   description: Issue is a dependency.
   aliases: [dependency]
